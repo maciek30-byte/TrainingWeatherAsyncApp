@@ -2,6 +2,7 @@ import Input from "./Input";
 import { fetchData } from "../functionality/fetchData";
 import { debounce } from "../functionality/debounce";
 import Message from "./Message";
+import ChartComponent from "./ChartComponent";
 class App {
   stateEnum = {
     isLoading: "Loading",
@@ -39,8 +40,15 @@ class App {
     this.render();
   }
 
-  transformWeatherData(){
-    // potrzebujemy do wyswietlania temperatury w Celciuszach oraz dataTime, czyli timestampu//
+  transformWeatherData(data) {
+    const list = data && data.list;
+    return list.map((dataItem) => {
+      const dt = dataItem && dataItem.dt;
+      const temp = dataItem && dataItem.main && dataItem.main.temp;
+      return { dt, temp };
+    });
+
+    // potrzebujemy do wyswietlania temperatury w Celciuszach oraz dataTime, czyli timestampu, wydobyc dt i main temp//
   }
   // EVENT HANDLER ///////////////////////////////////////////////////////////////////////////////////////////////////////
   onInput(event) {
@@ -77,8 +85,8 @@ class App {
       "main-input"
     );
     if (this.data !== undefined) {
-      const text = document.createTextNode(JSON.stringify(this.data));
-      this.container.appendChild(text);
+      const chart = new ChartComponent(this.transformWeatherData(this.data));
+      this.container.appendChild(chart.render());
     }
 
     this.container.appendChild(searchInput.render());
