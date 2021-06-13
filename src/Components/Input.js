@@ -7,6 +7,7 @@ class Input {
   }
   render() {
     const input = document.createElement("input");
+    input.value = this.value
     input.classList.add(this.classForElement)
     input.placeholder = this.placeHolder;
     input.addEventListener("input", this.onInput);

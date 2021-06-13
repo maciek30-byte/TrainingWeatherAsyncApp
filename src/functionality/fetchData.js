@@ -6,6 +6,12 @@ export const fetchData = (url, options = {}) => {
   } = options;
   start();
   return fetch(url)
+    .then((response) => {
+      if (response.status < 200 || response.status > 299) {
+        throw new Error(response.statusText);
+      }
+      return response;
+    })
     .then((response) => response.json())
     .catch(catchError)
     .finally(end);
