@@ -1,9 +1,12 @@
 //@ToDo add buto Try again, when api do not work properly//
+//@ToDo refactoring experimental opeerator in checking chains//
 import Input from "./Input";
 import { fetchData } from "../functionality/fetchData";
 import { debounce } from "../functionality/debounce";
 import Message from "./Message";
 import ChartComponent from "./ChartComponent";
+import GpsMap from "./GpsMap";
+
 class App {
   stateEnum = {
     isLoading: "Loading",
@@ -46,13 +49,18 @@ class App {
     return list.map((dataItem) => {
       const dt = dataItem && dataItem.dt;
       const temp = dataItem && dataItem.main && dataItem.main.temp;
-      const perceivedTemp = dataItem && dataItem.main && dataItem.main.feels_like;
+      const perceivedTemp =
+        dataItem && dataItem.main && dataItem.main.feels_like;
       // that was feels_like started property name changed name in the console
-      return { dt, temp , perceivedTemp };
+      return { dt, temp, perceivedTemp };
     });
-
-    // potrzebujemy do wyswietlania temperatury w Celciuszach oraz dataTime, czyli timestampu, wydobyc dt i main temp//
   }
+
+
+
+  // potrzebujemy do wyswietlania temperatury w Celciuszach oraz dataTime, czyli timestampu, wydobyc dt i main temp//
+
+
   // EVENT HANDLER ///////////////////////////////////////////////////////////////////////////////////////////////////////
   onInput(event) {
     this.query = event.target.value;
@@ -76,11 +84,18 @@ class App {
     this.render();
   }
 
+  getCityCord(){
+    const name = this.data?.city?.name;
+    const lat = this.data?.city?.coord?.lat;
+    const lon = this.data?.city?.coord?.lon;
+    return {name,lat ,lon}
+  }
+
   render() {
     if (this.container === null) {
       this.container = document.createElement("div");
     }
-    this.container.classList.add('.main-container')
+    this.container.classList.add(".main-container");
     this.container.innerHTML = "";
     const searchInput = new Input(
       "type city",
@@ -88,10 +103,17 @@ class App {
       (event) => this.onInput(event),
       "main-input"
     );
+
     if (this.data !== undefined) {
-      console.log('transformed Data before pass', this.transformWeatherData(this.data))
+      console.log(
+        "transformed Data before pass",
+        this.transformWeatherData(this.data)
+      );
       const chart = new ChartComponent(this.transformWeatherData(this.data));
       this.container.appendChild(chart.render());
+      const {lat,lon,name} = this.getCityCord()
+      const map = new GpsMap(lat,lon,name)
+      this.container.appendChild(map.render())
     }
 
     this.container.appendChild(searchInput.render());
@@ -111,6 +133,7 @@ class App {
       this.container.appendChild(message.render());
       return this.container;
     }
+
 
     return this.container;
   }
