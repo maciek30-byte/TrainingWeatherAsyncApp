@@ -1,3 +1,5 @@
+import L from "leaflet";
+import 'leaflet/dist/leaflet.css'
 class GpsMap {
   constructor(lat, lon, name) {
     this.lat = lat;
@@ -5,18 +7,26 @@ class GpsMap {
     this.name = name;
   }
   render() {
-    const div = document.createElement("div");
-    const p1 = document.createElement("p");
-    p1.innerText = this.name;
-    const p2 = document.createElement("p");
-    p2.innerText = this.lon;
-    const p3 = document.createElement("p");
-    p3.innerText = this.lat;
-    div.appendChild(p1);
-    div.appendChild(p2);
-    div.appendChild(p3);
+    const div = document.createElement('div')
+    div.style.width = '50%'
+    div.style.height = '500px'
 
-    return div;
+    setTimeout(() => {
+      const map = L.map(div).setView([this.lat, this.lon], 11);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      L.marker([this.lat, this.lon], { opacity: 5 })
+        .addTo(map)
+        .bindPopup(this.name)
+        .openPopup();
+    })
+
+
+    return div
+
   }
 }
 export default GpsMap;

@@ -95,6 +95,7 @@ class App {
     if (this.container === null) {
       this.container = document.createElement("div");
     }
+
     this.container.classList.add(".main-container");
     this.container.innerHTML = "";
     const searchInput = new Input(
